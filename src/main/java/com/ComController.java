@@ -1,5 +1,6 @@
 package com;
 
+import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.fxml.Initializable;
 import javafx.scene.control.ListView;
@@ -23,23 +24,31 @@ public class ComController implements Initializable {
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         try {
-            Socket socket = new Socket("localhost", 8189);
-            dis= new DataInputStream(socket.getInputStream());
+            Socket socket = new Socket("127.0.0.1", 8089);
+            dis = new DataInputStream(socket.getInputStream());
             dos = new DataOutputStream(socket.getOutputStream());
-            Thread read= new Thread(() -> {
+            Thread read = new Thread(() -> {
+                try {
+                    while (true) {
+                       String message =  dis.readUTF();
+                        Platform.runLater(() ->   mainListField.getItems().add(message));
 
+                    }
+                } catch (IOException e) {
+                    throw new RuntimeException(e);
+                }
             });
-read.setDaemon(true);
-read.start();
+            read.setDaemon(true);
+            read.start();
         } catch (IOException e) {
             e.printStackTrace();
         }
     }
 
     public void sendMessage(ActionEvent actionEvent) throws IOException {
-    String message = textFieldInput.getText();
-    dos.writeUTF(message);
-    dos.flush();
-    textFieldInput.clear();
+        String message = textFieldInput.getText();
+        dos.writeUTF(message);
+        dos.flush();
+        textFieldInput.clear();
     }
 }
