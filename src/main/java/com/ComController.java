@@ -74,10 +74,14 @@ public class ComController implements Initializable {
     }
 
     public void sendMessage(ActionEvent actionEvent) throws IOException {
-        String message = textFieldInput.getText();
-        dos.writeUTF(message);
+        String filesName = textFieldInput.getText();
+        Path pathFile = com.resolve(filesName);
+        if (Files.exists(pathFile)){
+            dos.writeUTF(filesName);
+        dos.writeLong(Files.size(pathFile));
+        Files.copy(pathFile, dos);
         dos.flush();
-        textFieldInput.clear();
+        }
     }
 
     public void showFiles() {
