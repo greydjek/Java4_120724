@@ -18,6 +18,7 @@ import java.util.ResourceBundle;
 import java.util.stream.Collectors;
 
 public class ComController implements Initializable {
+private byte[] buffer;
     private Path com;
     public ListView<String> mainListField;
     public TextField textFieldInput;
@@ -27,6 +28,7 @@ public class ComController implements Initializable {
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
+            buffer = new byte[1024];
                 com = Paths.get("C:/Education/Java4/Java4/com");
                  Platform.runLater(()->{
             try {
@@ -57,7 +59,7 @@ public class ComController implements Initializable {
                 try {
                     while (true) {
                         String message = dis.readUTF();
-                        Platform.runLater(() -> mainListField.getItems().addAll(comOutFiles.outFile()));
+                        Platform.runLater(() -> textFieldInput.setText(message));
 
                     }
                 } catch (IOException e) {
@@ -79,7 +81,12 @@ public class ComController implements Initializable {
         if (Files.exists(pathFile)){
             dos.writeUTF(filesName);
         dos.writeLong(Files.size(pathFile));
-        Files.copy(pathFile, dos);
+        FileInputStream fis = new FileInputStream(pathFile.toFile());
+        int reed;
+        while((reed = fis.read(buffer)) !=-1){
+            dos.write(buffer, 0 , reed);
+        }
+        fis.close();
         dos.flush();
         }
     }
