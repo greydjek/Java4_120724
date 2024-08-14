@@ -1,5 +1,8 @@
-package com;
 
+package com;
+import common.AbstractMessage;
+import io.netty.handler.codec.serialization.ObjectDecoderInputStream;
+import io.netty.handler.codec.serialization.ObjectEncoderOutputStream;
 import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.fxml.Initializable;
@@ -18,51 +21,30 @@ import java.util.ResourceBundle;
 import java.util.stream.Collectors;
 
 public class ComController implements Initializable {
-private byte[] buffer;
+    private byte[] buffer;
     private Path com;
     public ListView<String> mainListField;
     public TextField textFieldInput;
-    private DataInputStream dis;
-    private DataOutputStream dos;
+    private ObjectDecoderInputStream dis;
+    private ObjectEncoderOutputStream dos;
     private ComOutFiles comOutFiles;
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
-            buffer = new byte[1024];
-                com = Paths.get("C:/Education/Java4/Java4/com");
-                 Platform.runLater(()->{
-            try {
-                fuulFilesView();
-            } catch (IOException e) {
-                throw new RuntimeException(e);
-            }
-
-        mainListField.setOnMouseClicked(e -> {
-                    if (e.getClickCount() == 2) {
-                        String fileName = mainListField.getSelectionModel().getSelectedItem();
-                        if (!Files.isDirectory(com.resolve(fileName))) {
-                            textFieldInput.setText(fileName);
-                        } else {
-                            textFieldInput.setText("File is not directory ");
-
-                        }
-                    }
-                }
-        );
-        });
-
         try {
-            Socket socket = new Socket("127.0.0.1", 8089);
-            dis = new DataInputStream(socket.getInputStream());
-            dos = new DataOutputStream(socket.getOutputStream());
+            Socket socket = new Socket("127.0.0.1", 8189);
+            dos = new ObjectEncoderOutputStream(socket.getOutputStream());
+            dis = new ObjectDecoderInputStream(socket.getInputStream());
             Thread read = new Thread(() -> {
                 try {
                     while (true) {
-                        String message = dis.readUTF();
-                        Platform.runLater(() -> textFieldInput.setText(message));
+                        AbstractMessage message = (AbstractMessage) dis.readObject();
+                        Platform.runLater(() -> mainListField.getItems().add(message.toString()));
 
                     }
                 } catch (IOException e) {
+                    throw new RuntimeException(e);
+                } catch (ClassNotFoundException e) {
                     throw new RuntimeException(e);
                 }
             });
@@ -76,19 +58,10 @@ private byte[] buffer;
     }
 
     public void sendMessage(ActionEvent actionEvent) throws IOException {
-        String filesName = textFieldInput.getText();
-        Path pathFile = com.resolve(filesName);
-        if (Files.exists(pathFile)){
-            dos.writeUTF(filesName);
-        dos.writeLong(Files.size(pathFile));
-        FileInputStream fis = new FileInputStream(pathFile.toFile());
-        int reed;
-        while((reed = fis.read(buffer)) !=-1){
-            dos.write(buffer, 0 , reed);
-        }
-        fis.close();
+        String string = textFieldInput.getText();
+        textFieldInput.clear();
+        dos.writeObject(new AbstractMessage(string) );
         dos.flush();
-        }
     }
 
     public void showFiles() {
