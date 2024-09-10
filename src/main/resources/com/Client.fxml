@@ -3,10 +3,17 @@
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 
-
-<AnchorPane prefHeight="675.0" prefWidth="529.0" xmlns="http://javafx.com/javafx/17.0.2-ea" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.ComController">
+<AnchorPane prefHeight="675.0" prefWidth="650.0" xmlns="http://javafx.com/javafx/17.0.2-ea" xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="com.ComController">
    <children>
-      <ListView fx:id="mainListField" layoutX="7.0" layoutY="7.0" prefHeight="600.0" prefWidth="514.0" />
-      <TextField onAction="#sendMessage" fx:id="textFieldInput" layoutX="7.0" layoutY="613.0" prefHeight="55.0" prefWidth="514.0" />
+      <ListView fx:id="mainListField" layoutX="7.0" layoutY="7.0" prefHeight="600.0" prefWidth="500.0" />
+      <TextField fx:id="textFieldInput" layoutX="7.0" layoutY="613.0" onAction="#sendMessage" prefHeight="55.0" prefWidth="500.0" />
+
+      <VBox layoutX="508">
+         <Button fx:id="addFile" minWidth="140" layoutX="150" onAction="#addFile" text="Add file" />
+         <Button fx:id="deleteFile" minWidth="140" onAction="#deleteFile" text="Delete file" />
+         <Button fx:id="renameFile" minWidth="140" onAction="#renameFile" text="Rename file" />
+         <Button fx:id="sendFile" minWidth="140" onAction="#sendFile" text="Send file" />
+      </VBox>
    </children>
 </AnchorPane>

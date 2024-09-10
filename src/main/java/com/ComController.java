@@ -1,72 +1,53 @@
 package com;
 
+import io.netty.handler.codec.serialization.ObjectDecoderInputStream;
+import io.netty.handler.codec.serialization.ObjectEncoderOutputStream;
 import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.fxml.Initializable;
 import javafx.scene.control.ListView;
 import javafx.scene.control.TextField;
 
-import java.awt.*;
-import java.io.*;
+
+import java.io.File;
+import java.io.IOException;
 import java.net.Socket;
 import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.List;
 import java.util.ResourceBundle;
 import java.util.stream.Collectors;
 
 public class ComController implements Initializable {
-private byte[] buffer;
+    private byte[] buffer;
     private Path com;
     public ListView<String> mainListField;
     public TextField textFieldInput;
-    private DataInputStream dis;
-    private DataOutputStream dos;
+    private ObjectDecoderInputStream dis;
+    private ObjectEncoderOutputStream dos;
     private ComOutFiles comOutFiles;
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
-            buffer = new byte[1024];
-                com = Paths.get("C:/Education/Java4/Java4/com");
-                 Platform.runLater(()->{
-            try {
-                fuulFilesView();
-            } catch (IOException e) {
-                throw new RuntimeException(e);
-            }
-
-        mainListField.setOnMouseClicked(e -> {
-                    if (e.getClickCount() == 2) {
-                        String fileName = mainListField.getSelectionModel().getSelectedItem();
-                        if (!Files.isDirectory(com.resolve(fileName))) {
-                            textFieldInput.setText(fileName);
-                        } else {
-                            textFieldInput.setText("File is not directory ");
-
-                        }
-                    }
-                }
-        );
-        });
-
         try {
-            Socket socket = new Socket("127.0.0.1", 8089);
-            dis = new DataInputStream(socket.getInputStream());
-            dos = new DataOutputStream(socket.getOutputStream());
+            Socket socket = new Socket("127.0.0.1", 8189);
+            dos = new ObjectEncoderOutputStream(socket.getOutputStream());
+            dis = new ObjectDecoderInputStream(socket.getInputStream());
             Thread read = new Thread(() -> {
                 try {
                     while (true) {
-                        String message = dis.readUTF();
-                        Platform.runLater(() -> textFieldInput.setText(message));
+                        AbstractMessage message = (AbstractMessage) dis.readObject();
+                        Platform.runLater(() -> textFieldInput.setText(message.toString()));
 
                     }
                 } catch (IOException e) {
                     throw new RuntimeException(e);
+                } catch (ClassNotFoundException e) {
+                    throw new RuntimeException(e);
                 }
             });
-            //showFiles();
+//            showFiles();
 
             read.setDaemon(true);
             read.start();
@@ -76,19 +57,10 @@ private byte[] buffer;
     }
 
     public void sendMessage(ActionEvent actionEvent) throws IOException {
-        String filesName = textFieldInput.getText();
-        Path pathFile = com.resolve(filesName);
-        if (Files.exists(pathFile)){
-            dos.writeUTF(filesName);
-        dos.writeLong(Files.size(pathFile));
-        FileInputStream fis = new FileInputStream(pathFile.toFile());
-        int reed;
-        while((reed = fis.read(buffer)) !=-1){
-            dos.write(buffer, 0 , reed);
-        }
-        fis.close();
+        String text = textFieldInput.getText();
+        textFieldInput.clear();
+        dos.writeObject(new AbstractMessage(text));
         dos.flush();
-        }
     }
 
     public void showFiles() {
@@ -105,4 +77,17 @@ private byte[] buffer;
                 toString()).collect(Collectors.toList());
         mainListField.getItems().addAll(list);
     }
+
+    public void addFile(ActionEvent actionEvent) {
+    }
+
+    public void sendFile(ActionEvent actionEvent) {
+    }
+
+    public void deleteFile(ActionEvent actionEvent) {
+    }
+
+    public void renameFile(ActionEvent actionEvent) {
+    }
 }
+
