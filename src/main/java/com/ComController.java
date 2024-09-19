@@ -7,6 +7,8 @@ import javafx.event.ActionEvent;
 import javafx.fxml.Initializable;
 import javafx.scene.control.ListView;
 import javafx.scene.control.TextField;
+import messageWorker.AbstractMessage;
+import messageWorker.ListMessage;
 
 
 import java.io.File;
@@ -15,11 +17,13 @@ import java.net.Socket;
 import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.List;
 import java.util.ResourceBundle;
 import java.util.stream.Collectors;
 
 public class ComController implements Initializable {
+    private Path carentDir;
     private byte[] buffer;
     private Path com;
     public ListView<String> mainListField;
@@ -31,6 +35,7 @@ public class ComController implements Initializable {
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         try {
+            carentDir = Paths.get("client");
             Socket socket = new Socket("127.0.0.1", 8189);
             dos = new ObjectEncoderOutputStream(socket.getOutputStream());
             dis = new ObjectDecoderInputStream(socket.getInputStream());
@@ -38,7 +43,8 @@ public class ComController implements Initializable {
                 try {
                     while (true) {
                         AbstractMessage message = (AbstractMessage) dis.readObject();
-                        Platform.runLater(() -> textFieldInput.setText(message.toString()));
+                        processMessage(message);
+//                        Platform.runLater(() -> textFieldInput.setText(message.toString()));
 
                     }
                 } catch (IOException e) {
@@ -53,6 +59,26 @@ public class ComController implements Initializable {
             read.start();
         } catch (IOException e) {
             e.printStackTrace();
+        }
+    }
+
+    private List<String> getFilesCarentDir() throws IOException {
+        return Files.list(carentDir).map(p -> p.getFileName().toString()).collect(Collectors.toList());
+    }
+
+    private void processMessage(AbstractMessage message) {
+        switch (message.getCommand()) {
+            case LIST_MESSAGE:
+
+            case FILE_MESSAGE:
+                ListMessage listMessage = (ListMessage) message;
+                Platform.runLater(() ->
+                {
+                    mainListField.getItems().clear();
+                    mainListField.getItems().addAll(listMessage.toString());
+
+                });
+                break;
         }
     }
 
