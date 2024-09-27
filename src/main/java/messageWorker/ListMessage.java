@@ -1,10 +1,12 @@
 package messageWorker;
 
+import lombok.Getter;
+
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.List;
 import java.util.stream.Collectors;
-
+@Getter
 public class ListMessage extends AbstractMessage{
     private final List<String> files;
 

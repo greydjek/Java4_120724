@@ -1,6 +1,4 @@
-package com;
-
-import javafx.collections.ObservableList;
+package wokerFiles;
 
 import java.io.File;
 import java.io.IOException;

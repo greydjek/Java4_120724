@@ -10,4 +10,8 @@ private final String name;
         this.name = name;
     setCommand(Command.FILE_REQUEST);
     }
+
+    public String getName() {
+        return name;
+    }
 }

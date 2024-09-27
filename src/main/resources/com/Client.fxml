@@ -3,17 +3,18 @@
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 
-<AnchorPane prefHeight="675.0" prefWidth="650.0" xmlns="http://javafx.com/javafx/17.0.2-ea" xmlns:fx="http://javafx.com/fxml/1"
-            fx:controller="com.ComController">
+<AnchorPane prefHeight="677.0" prefWidth="1073.0" xmlns="http://javafx.com/javafx/17.0.2-ea" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.ComController">
    <children>
-      <ListView fx:id="mainListField" layoutX="7.0" layoutY="7.0" prefHeight="600.0" prefWidth="500.0" />
-      <TextField fx:id="textFieldInput" layoutX="7.0" layoutY="613.0" onAction="#sendMessage" prefHeight="55.0" prefWidth="500.0" />
+      <ListView fx:id="serverListFiles" layoutX="7.0" layoutY="33.0" prefHeight="574.0" prefWidth="442.0" />
+      <TextField fx:id="textFieldInput" layoutX="7.0" layoutY="613.0" onAction="#sendMessage" prefHeight="55.0" prefWidth="1062.0" />
 
-      <VBox layoutX="508">
-         <Button fx:id="addFile" minWidth="140" layoutX="150" onAction="#addFile" text="Add file" />
-         <Button fx:id="deleteFile" minWidth="140" onAction="#deleteFile" text="Delete file" />
-         <Button fx:id="renameFile" minWidth="140" onAction="#renameFile" text="Rename file" />
-         <Button fx:id="sendFile" minWidth="140" onAction="#sendFile" text="Send file" />
-      </VBox>
+      <VBox layoutX="487.0" layoutY="8.0" />
+      <Label fx:id="labelServer" layoutX="14.0" layoutY="14.0" prefHeight="19.0" prefWidth="166.0" text="Server" />
+      <ListView layoutX="627.0" layoutY="33.0" prefHeight="574.0" prefWidth="442.0" fx:id="clientMainTextField"/>
+      <Label fx:id="labelClient" layoutX="648.0" layoutY="14.0" prefHeight="19.0" prefWidth="140.0" text="Client" />
+      <Button fx:id="addFile" layoutX="467.0" layoutY="178.0" minWidth="140" onAction="#addFileToClient" text="Add file to cliend --&gt;" />
+      <Button fx:id="deleteFile" layoutX="467.0" layoutY="540.0" minWidth="140" onAction="#deleteFile" text="Delete file" />
+      <Button fx:id="renameFile" layoutX="467.0" layoutY="567.0" minWidth="140" onAction="#renameFile" text="Rename file" />
+      <Button fx:id="sendFile" layoutX="465.0" layoutY="131.0" minWidth="140" onAction="#sendFile" text="&lt;-- Send file to server" />
    </children>
 </AnchorPane>
