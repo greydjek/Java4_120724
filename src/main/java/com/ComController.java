@@ -46,13 +46,14 @@ public class ComController implements Initializable {
     private ObjectDecoderInputStream dis;
     private ObjectEncoderOutputStream dos;
     private ComOutFiles comOutFiles;
-ErrorMessage errorMessage;
+    ErrorMessage errorMessage;
     File file;
+
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         try {
             carentDir = Paths.get("C:\\Education\\Java4\\Java4\\com");
-             Socket socket = new Socket("127.0.0.1", 8189);
+            Socket socket = new Socket("127.0.0.1", 8189);
             dos = new ObjectEncoderOutputStream(socket.getOutputStream());
             dis = new ObjectDecoderInputStream(socket.getInputStream());
             Thread read = new Thread(() -> {
@@ -76,7 +77,7 @@ ErrorMessage errorMessage;
     }
 
     private void listClientFiles() {
-        Platform.runLater(() ->   {
+        Platform.runLater(() -> {
                     try {
                         clientMainTextField.getItems().clear();
                         clientMainTextField.getItems().addAll(getFilesClientDir());
@@ -86,6 +87,7 @@ ErrorMessage errorMessage;
                 }
         );
     }
+
     private List<String> getFilesClientDir() throws IOException {
         List<String> files = Files.list(carentDir).map(p -> p.getFileName().toString()).collect(Collectors.toList());
         return files;
@@ -132,7 +134,7 @@ ErrorMessage errorMessage;
 
     public void sendMessage(ActionEvent actionEvent) throws IOException {
         String text = textFieldInput.getText();
-        Platform.runLater(()-> {
+        Platform.runLater(() -> {
             textFieldInput.clear();
         });
         dos.writeObject(new AbstractMessage(text));
@@ -142,38 +144,36 @@ ErrorMessage errorMessage;
     public void addFileToClient(ActionEvent actionEvent) {
         String name = serverListFiles.getSelectionModel().getSelectedItem().toString();
         FileRequest fileRequest = new FileRequest(name);
-       }
+    }
 
     public void sendFile(ActionEvent actionEvent) {
     }
 
-    public void deleteFile(ActionEvent actionEvent) {
-        if (clientMainTextField.isFocused()){
+
+    private void setDeleteFile() {
+        if (clientMainTextField.getSelectionModel().getSelectedItem() != null) {
             file = Paths.get(String.valueOf(carentDir.resolve(clientMainTextField.getFocusModel().getFocusedItem().toString()))).toFile();
-            if (!file.exists()){
-                Platform.runLater(()->
-                {textFieldInput.clear();
-                    textFieldInput.setText("файл не выбран");
-                });
-            }
             try {
                 file.delete();
                 listClientFiles();
+                textFieldInput.clear();
+                textFieldInput.setText("был удажен " + file.getName());
             } catch (Exception e) {
                 e.printStackTrace();
-                errorMessage.setError("файл не выбран или не существует");
-            }
-        }else {
-            Platform.runLater(()-> {
-                textFieldInput.clear();
-                textFieldInput.setText("файл не существует или вы не имеете прав на удаление");
-            });
+                }
         }
+        else  {
+            textFieldInput.clear();
+            textFieldInput.setText("файл не существует или вы не имеете прав на удаление");
+        }
+    }
 
+    public void deleteFile(ActionEvent actionEvent) {
+        Platform.runLater(() -> setDeleteFile());
     }
 
     public void renameFile(ActionEvent actionEvent) throws IOException {
-        if (file.exists()){
+        if (file.exists()) {
 //file.renameTo(System.in.read())
         }
     }
