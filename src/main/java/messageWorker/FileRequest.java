@@ -11,7 +11,4 @@ private final String name;
     setCommand(Command.FILE_REQUEST);
     }
 
-    public String getName() {
-        return name;
-    }
 }

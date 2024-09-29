@@ -52,8 +52,7 @@ ErrorMessage errorMessage;
     public void initialize(URL location, ResourceBundle resources) {
         try {
             carentDir = Paths.get("C:\\Education\\Java4\\Java4\\com");
-            file = Paths.get(String.valueOf(carentDir.resolve(clientMainTextField.getFocusModel().getFocusedItem().toString()))).toFile();
-            Socket socket = new Socket("127.0.0.1", 8189);
+             Socket socket = new Socket("127.0.0.1", 8189);
             dos = new ObjectEncoderOutputStream(socket.getOutputStream());
             dis = new ObjectDecoderInputStream(socket.getInputStream());
             Thread read = new Thread(() -> {
@@ -62,7 +61,6 @@ ErrorMessage errorMessage;
                         AbstractMessage message = (AbstractMessage) dis.readObject();
                         processMessage(message);
                         listClientFiles();
-//                       textFieldInput.setText(message.toString())
                     }
                 } catch (IOException e) {
                     throw new RuntimeException(e);
@@ -70,7 +68,6 @@ ErrorMessage errorMessage;
                     throw new RuntimeException(e);
                 }
             });
-
             read.setDaemon(true);
             read.start();
         } catch (IOException e) {
@@ -90,8 +87,7 @@ ErrorMessage errorMessage;
         );
     }
     private List<String> getFilesClientDir() throws IOException {
-        List<String> files;
-files = Files.list(carentDir).map(p -> p.getFileName().toString()).collect(Collectors.toList());
+        List<String> files = Files.list(carentDir).map(p -> p.getFileName().toString()).collect(Collectors.toList());
         return files;
     }
 
@@ -136,7 +132,9 @@ files = Files.list(carentDir).map(p -> p.getFileName().toString()).collect(Colle
 
     public void sendMessage(ActionEvent actionEvent) throws IOException {
         String text = textFieldInput.getText();
-        textFieldInput.clear();
+        Platform.runLater(()-> {
+            textFieldInput.clear();
+        });
         dos.writeObject(new AbstractMessage(text));
         dos.flush();
     }
@@ -150,15 +148,28 @@ files = Files.list(carentDir).map(p -> p.getFileName().toString()).collect(Colle
     }
 
     public void deleteFile(ActionEvent actionEvent) {
-    System.out.println(String.valueOf(carentDir.resolve(clientMainTextField.getFocusModel().getFocusedItem().toString())));
-   if (file.exists())
-        try {
+        if (clientMainTextField.isFocused()){
+            file = Paths.get(String.valueOf(carentDir.resolve(clientMainTextField.getFocusModel().getFocusedItem().toString()))).toFile();
+            if (!file.exists()){
+                Platform.runLater(()->
+                {textFieldInput.clear();
+                    textFieldInput.setText("файл не выбран");
+                });
+            }
+            try {
                 file.delete();
                 listClientFiles();
             } catch (Exception e) {
-              e.printStackTrace();
-errorMessage.setError("файл не выбран или не существует");
+                e.printStackTrace();
+                errorMessage.setError("файл не выбран или не существует");
             }
+        }else {
+            Platform.runLater(()-> {
+                textFieldInput.clear();
+                textFieldInput.setText("файл не существует или вы не имеете прав на удаление");
+            });
+        }
+
     }
 
     public void renameFile(ActionEvent actionEvent) throws IOException {
