@@ -157,7 +157,7 @@ public class ComController implements Initializable {
                 file.delete();
                 listClientFiles();
                 textFieldInput.clear();
-                textFieldInput.setText("был удажен " + file.getName());
+                textFieldInput.setText("Удален файл -> " + file.getName());
             } catch (Exception e) {
                 e.printStackTrace();
                 }
