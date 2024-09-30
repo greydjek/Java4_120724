@@ -140,17 +140,30 @@ public class ComController implements Initializable {
         dos.writeObject(new AbstractMessage(text));
         dos.flush();
     }
-
-    public void addFileToClient(ActionEvent actionEvent) {
-        String name = serverListFiles.getSelectionModel().getSelectedItem().toString();
-        FileRequest fileRequest = new FileRequest(name);
+public void setAddFile (){
+       if (serverListFiles.getSelectionModel().getSelectedItems()!= null){
+        try{
+            String name = serverListFiles.getSelectionModel().getSelectedItem().toString();
+            FileRequest fileRequest = new FileRequest(name);
+            dos.writeObject(fileRequest);
+            dos.flush();
+        }catch (IOException e){
+            e.printStackTrace();
+        }
+    }else {textFieldInput.clear();
+        textFieldInput.setText("Выберите файл на сервере");
     }
+    }
+   public void addFileToClient(ActionEvent actionEvent) throws IOException {
+       Platform.runLater(this::setAddFile);
+
+   }
 
     public void sendFile(ActionEvent actionEvent) {
     }
 
 
-    private void setDeleteFile() {
+ public void setDeleteFile() {
         if (clientMainTextField.getSelectionModel().getSelectedItem() != null) {
             file = Paths.get(String.valueOf(carentDir.resolve(clientMainTextField.getFocusModel().getFocusedItem().toString()))).toFile();
             try {
