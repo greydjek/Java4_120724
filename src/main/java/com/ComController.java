@@ -6,10 +6,8 @@ import io.netty.handler.codec.serialization.ObjectEncoderOutputStream;
 import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.fxml.Initializable;
-import javafx.scene.control.Button;
-import javafx.scene.control.Label;
-import javafx.scene.control.ListView;
-import javafx.scene.control.TextField;
+import javafx.scene.control.*;
+import javafx.scene.layout.Pane;
 import messageWorker.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -38,6 +36,10 @@ public class ComController implements Initializable {
     public Button addFile;
     public Button renameFile;
     public Button sendFile;
+    public TextArea renameFileTextField;
+    public Button renameFileYes;
+    public Button renameFileNo;
+    public Pane paneRenameFile;
     private Path carentDir;
     private byte[] buffer;
     private Path com;
@@ -186,9 +188,24 @@ public void setAddFile (){
     }
 
     public void renameFile(ActionEvent actionEvent) throws IOException {
-        if (file.exists()) {
-//file.renameTo(System.in.read())
-        }
+paneRenameFile.setVisible(true);
     }
+
+    public void cancelRename(ActionEvent actionEvent) {
+    paneRenameFile.setVisible(false);
+    }
+private void renameF(){
+        if (renameFileTextField.getText()!=null){
+            String newName = renameFileTextField.getText();
+            File file1= carentDir.resolve(clientMainTextField.getSelectionModel().getSelectedItems().toString()).toFile();
+            file1.renameTo(new File(newName));
+        }
+        else {renameFileTextField.clear();
+            renameFileTextField.setText("введите новое имя файла сюда");
+        }
+}
+    public void renameFileYes(ActionEvent actionEvent) {
+        Platform.runLater(this::renameF);
+           }
 }
 
