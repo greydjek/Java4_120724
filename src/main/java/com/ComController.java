@@ -142,30 +142,33 @@ public class ComController implements Initializable {
         dos.writeObject(new AbstractMessage(text));
         dos.flush();
     }
-public void setAddFile (){
-       if (serverListFiles.getSelectionModel().getSelectedItems()!= null){
-        try{
-            String name = serverListFiles.getSelectionModel().getSelectedItem().toString();
-            FileRequest fileRequest = new FileRequest(name);
-            dos.writeObject(fileRequest);
-            dos.flush();
-        }catch (IOException e){
-            e.printStackTrace();
-        }
-    }else {textFieldInput.clear();
-        textFieldInput.setText("Выберите файл на сервере");
-    }
-    }
-   public void addFileToClient(ActionEvent actionEvent) throws IOException {
-       Platform.runLater(this::setAddFile);
 
-   }
+    public void setAddFile() {
+        if (serverListFiles.getSelectionModel().getSelectedItems() != null) {
+            try {
+                String name = serverListFiles.getSelectionModel().getSelectedItem().toString();
+                FileRequest fileRequest = new FileRequest(name);
+                dos.writeObject(fileRequest);
+                dos.flush();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        } else {
+            textFieldInput.clear();
+            textFieldInput.setText("Выберите файл на сервере");
+        }
+    }
+
+    public void addFileToClient(ActionEvent actionEvent) throws IOException {
+        Platform.runLater(this::setAddFile);
+
+    }
 
     public void sendFile(ActionEvent actionEvent) {
     }
 
 
- public void setDeleteFile() {
+    public void setDeleteFile() {
         if (clientMainTextField.getSelectionModel().getSelectedItem() != null) {
             file = Paths.get(String.valueOf(carentDir.resolve(clientMainTextField.getFocusModel().getFocusedItem().toString()))).toFile();
             try {
@@ -175,9 +178,8 @@ public void setAddFile (){
                 textFieldInput.setText("Удален файл -> " + file.getName());
             } catch (Exception e) {
                 e.printStackTrace();
-                }
-        }
-        else  {
+            }
+        } else {
             textFieldInput.clear();
             textFieldInput.setText("файл не существует или вы не имеете прав на удаление");
         }
@@ -188,24 +190,44 @@ public void setAddFile (){
     }
 
     public void renameFile(ActionEvent actionEvent) throws IOException {
-paneRenameFile.setVisible(true);
+        paneRenameFile.setVisible(true);
     }
 
     public void cancelRename(ActionEvent actionEvent) {
-    paneRenameFile.setVisible(false);
+        paneRenameFile.setVisible(false);
     }
-private void renameF(){
-        if (renameFileTextField.getText()!=null){
+
+    private void renameF() throws IOException {
+        if (renameFileTextField.getText() != null) {
             String newName = renameFileTextField.getText();
-            File file1= carentDir.resolve(clientMainTextField.getSelectionModel().getSelectedItems().toString()).toFile();
-            file1.renameTo(new File(newName));
+            File file1 = carentDir.resolve(clientMainTextField.getSelectionModel().getSelectedItems().toString()).toFile();
+            File file2 = new File(String.valueOf(carentDir.resolve(newName)));
+            Path s1 = Paths.get(carentDir.resolve(clientMainTextField.getFocusModel().getFocusedItem().toString()).toFile().toURI());
+            try {
+                Files.move(s1, s1.resolveSibling(newName));
+                paneRenameFile.setVisible(false);
+                listClientFiles();
+                textFieldInput.clear();
+                textFieldInput.setText("yes renamed file " + file1.getName() + " -->> " + file2.getName());
+
+            } catch (IOException e) {
+                e.printStackTrace();
+                paneRenameFile.setVisible(false);
+                textFieldInput.clear();
+                textFieldInput.setText("NO renamed file ");
+
+            }
         }
-        else {renameFileTextField.clear();
-            renameFileTextField.setText("введите новое имя файла сюда");
-        }
-}
+    }
+
     public void renameFileYes(ActionEvent actionEvent) {
-        Platform.runLater(this::renameF);
-           }
+        Platform.runLater(() -> {
+            try {
+                renameF();
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+        });
+    }
 }
 
