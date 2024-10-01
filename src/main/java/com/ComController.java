@@ -15,6 +15,7 @@ import wokerFiles.ComOutFiles;
 
 
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.net.Socket;
@@ -42,18 +43,16 @@ public class ComController implements Initializable {
     public Pane paneRenameFile;
     private Path carentDir;
     private byte[] buffer;
-    private Path com;
     public ListView<String> serverListFiles;
     public TextField textFieldInput;
     private ObjectDecoderInputStream dis;
     private ObjectEncoderOutputStream dos;
-    private ComOutFiles comOutFiles;
-    ErrorMessage errorMessage;
     File file;
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         try {
+            buffer = new byte[8191];
             carentDir = Paths.get("C:\\Education\\Java4\\Java4\\com");
             Socket socket = new Socket("127.0.0.1", 8189);
             dos = new ObjectEncoderOutputStream(socket.getOutputStream());
@@ -164,7 +163,22 @@ public class ComController implements Initializable {
 
     }
 
-    public void sendFile(ActionEvent actionEvent) {
+    public void sendFile(ActionEvent actionEvent) throws Exception {
+        boolean isFirstBath = true, isFinishBath;
+        File file = new File(carentDir.resolve(clientMainTextField.getFocusModel().getFocusedItem().toString()).toFile().toURI());
+        long size = Files.size(file.toPath());
+        try (FileInputStream in = new FileInputStream(file)) {
+            int read;
+            while ((read = in.read(buffer)) != -1) {
+                isFinishBath = (in.available() <= 0);
+                FileMessage fileMessage = new FileMessage(file.toPath(), buffer, file.getName(), isFirstBath, isFinishBath, read);
+                isFirstBath = false;
+                dos.writeObject(fileMessage);
+                dos.flush();
+                dos.writeObject(new ListMessage());
+            }
+        }
+
     }
 
 
