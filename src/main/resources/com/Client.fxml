@@ -3,7 +3,8 @@
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 
-<AnchorPane prefHeight="677.0" prefWidth="1073.0" xmlns="http://javafx.com/javafx/17.0.2-ea" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.ComController">
+<AnchorPane fx:id="mainPanelControl" prefHeight="677.0" prefWidth="1073.0" xmlns="http://javafx.com/javafx/17.0.2-ea" xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="com.ComController">
    <children>
       <ListView fx:id="serverListFiles" layoutX="7.0" layoutY="33.0" prefHeight="574.0" prefWidth="442.0" />
       <TextField fx:id="textFieldInput" layoutX="7.0" layoutY="613.0" onAction="#sendMessage" prefHeight="55.0" prefWidth="1062.0" />

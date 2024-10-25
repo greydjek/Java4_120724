@@ -7,6 +7,7 @@ import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.fxml.Initializable;
 import javafx.scene.control.*;
+import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.Pane;
 import messageWorker.*;
 import org.slf4j.Logger;
@@ -41,6 +42,7 @@ public class ComController implements Initializable {
     public Button renameFileYes;
     public Button renameFileNo;
     public Pane paneRenameFile;
+    public AnchorPane mainPanelControl;
     private Path carentDir;
     private byte[] buffer;
     public ListView<String> serverListFiles;
@@ -51,9 +53,10 @@ public class ComController implements Initializable {
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
-        try {
+        try { listClientFiles();
             buffer = new byte[8191];
-            carentDir = Paths.get("C:\\Education\\Java4\\Java4\\com");
+            carentDir = Paths.get("com");
+
             Socket socket = new Socket("127.0.0.1", 8189);
             dos = new ObjectEncoderOutputStream(socket.getOutputStream());
             dis = new ObjectDecoderInputStream(socket.getInputStream());
@@ -116,15 +119,20 @@ public class ComController implements Initializable {
                 });
                 break;
             case AUTENTIFCATION_MESSAGE:
-                StringMessage stringMessage = new StringMessage(message.toString());
-                System.out.println(stringMessage);
-                autentification(String.valueOf(stringMessage));
-                log.debug("mesage - *", message, " *");
+         Platform.runLater(() -> {
+             StringMessage stringMessage = new StringMessage(message.toString());
+             System.out.println(stringMessage);
+             autentification(String.valueOf(stringMessage));
+             log.debug("mesage - *", message, " *");
+         });
                 break;
         }
     }
 
     protected void autentification(String message) {
+     //   autentification.autentifControl.setVisible(false);
+       // mainPanelControl.setVisible(true);
+
         List<String> list = Arrays.asList(message.toString().split("@"));
         Path path = Paths.get("com");
         File clientDir = Paths.get(String.valueOf(path.resolve(list.get(0)))).toFile();

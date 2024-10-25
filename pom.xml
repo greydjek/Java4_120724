@@ -1,23 +1,45 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
-  <modelVersion>4.0.0</modelVersion>
-  <groupId>org.example</groupId>
-    <artifactId>Java4</artifactId>
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <groupId>org.example</groupId>
+    <artifactId>ClientModule</artifactId>
     <version>1.0-SNAPSHOT</version>
     <name>Archetype - Java4</name>
     <url>http://maven.apache.org</url>
     <build>
         <plugins>
+<!--            <plugin>-->
+<!--                <artifactId>maven-compiler-plugin</artifactId>-->
+            <!--            </plugin>-->
+            <!--                <groupId>org.apache.maven.plugins</groupId>-->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-compiler-plugin</artifactId>
-                <configuration>
-                    <source>8</source>
-                    <target>8</target>
-                </configuration>
-                       </plugin>
-        </plugins>
+            <artifactId>maven-shade-plugin</artifactId>
+            <executions>
+                <execution>
+                    <id>shade</id>
+                    <goals>
+                        <goal>shade</goal>
+                    </goals>
+                    <configuration>
+<!--                        <configuration>-->
+                        <source>8</source>
+                        <target>8</target>
 
+<!--                    </configuration>-->
+                        <transformers>
+                            <transformer implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
+                                <mainClass>com.App</mainClass>
+                                <manifestEntries>
+                                    <Multi-Release>true</Multi-Release>
+                                </manifestEntries>
+                            </transformer>
+                        </transformers>
+                    </configuration>
+                </execution>
+            </executions>
+        </plugin>
+        </plugins>
     </build>
     <dependencies>
         <dependency>
@@ -41,5 +63,5 @@
             <artifactId>sqlite-jdbc</artifactId>
             <version>3.34.0</version>
         </dependency>
-      </dependencies>
+    </dependencies>
 </project>
