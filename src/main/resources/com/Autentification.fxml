@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<AnchorPane fx:id="autentifControl" visible="true" prefHeight="677.0" prefWidth="1073.0" xmlns="http://javafx.com/javafx/17.0.2-ea" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.Autentification">
+   <children>
+      <Button fx:id="buttonAutentificftion" layoutX="456.0" layoutY="364.0" mnemonicParsing="false" onAction="#sendMesageAutentification" prefHeight="33.0" prefWidth="163.0" text="Inter" />
+      <PasswordField fx:id="passwordField" layoutX="457.0" layoutY="302.0" />
+      <TextField fx:id="loginField" layoutX="457.0" layoutY="232.0" />
+      <Label layoutX="457.0" layoutY="277.0" prefHeight="19.0" prefWidth="162.0" text="Password" />
+      <Label layoutX="454.0" layoutY="202.0" prefHeight="19.0" prefWidth="162.0" text="Login" />
+      <Label layoutX="457.0" layoutY="421.0" prefHeight="54.0" prefWidth="163.0" text="Connect is disabled" />
+   </children>
+</AnchorPane>
